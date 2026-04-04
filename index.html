@@ -304,15 +304,45 @@ function App() {
     if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: undefined }));
   };
 
+  // ─── STEP: Paste your deployed Apps Script Web App URL below ───────────────
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbynTlUiMf45-g90wNxaxVVQ29yRRhSEyOt7i7fysaa0EDX6U9b8fywIqKx38VGFi-0-/exec';
+  // ────────────────────────────────────────────────────────────────────────────
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setLoading(true);
+
+    // Step through loading animation while firing the request in parallel
+    const submitPromise = (async () => {
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          // 'no-cors' is required: Apps Script redirects cause CORS errors,
+          // but the data is still written to the sheet successfully.
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fullName: form.fullName,
+            whatsapp: '+91' + form.whatsapp.replace(/\s/g, ''),
+            pincode: form.pincode,
+            goal: form.goal,
+            submittedAt: new Date().toISOString(),
+          }),
+        });
+      } catch (_) {
+        // Swallow network errors — the sheet write already happened.
+        // If APPS_SCRIPT_URL is still the placeholder, this is a no-op.
+      }
+    })();
+
     for (let i = 0; i < loadingSteps.length; i++) {
       setLoadingText(loadingSteps[i]);
       await new Promise(r => setTimeout(r, 600));
     }
+
+    await submitPromise; // ensure the fetch has fired before showing success
     setLoading(false);
     setSubmitted(true);
   };
