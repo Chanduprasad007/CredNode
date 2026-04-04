@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>CredNode — Level Up Your Financial Stack</title>
+  <meta name="description" content="Optimize your credit, unlock premium rewards, and secure the capital you need. Get your personalized financial diagnostic from CredNode." />
+  <meta name="theme-color" content="#0a0f1a" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: {
+              950: '#05080f',
+              900: '#0a0f1a',
+              800: '#0d1526',
+              700: '#111d35',
+              600: '#162340',
+            },
+            electric: {
+              DEFAULT: '#00c8ff',
+              dim: '#0099cc',
+              glow: '#00e5ff',
+            },
+            neon: {
+              DEFAULT: '#00ff88',
+              dim: '#00cc6a',
+              glow: '#39ffb4',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          boxShadow: {
+            'glow-blue': '0 0 20px rgba(0, 200, 255, 0.5), 0 0 60px rgba(0, 200, 255, 0.2)',
+            'glow-green': '0 0 20px rgba(0, 255, 136, 0.5), 0 0 60px rgba(0, 255, 136, 0.2)',
+            'glow-blue-lg': '0 0 40px rgba(0, 200, 255, 0.7), 0 0 80px rgba(0, 200, 255, 0.3)',
+            'card': '0 4px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'scan': 'scan 4s linear infinite',
+            'blink': 'blink 1s step-end infinite',
+            'fade-up': 'fadeUp 0.7s ease-out forwards',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-12px)' },
+            },
+            scan: {
+              '0%': { transform: 'translateY(-100%)' },
+              '100%': { transform: 'translateY(100%)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: '1' },
+              '50%': { opacity: '0' },
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(24px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- React + Babel CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #0a0f1a;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0a0f1a; }
+    ::-webkit-scrollbar-thumb { background: #00c8ff44; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00c8ff88; }
+
+    /* Hex grid background */
+    .hex-bg {
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(0, 200, 255, 0.07) 0%, transparent 60%),
+        radial-gradient(circle at 80% 10%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 60% 90%, rgba(0, 200, 255, 0.04) 0%, transparent 40%);
+    }
+
+    /* Grid lines */
+    .grid-lines {
+      background-image:
+        linear-gradient(rgba(0, 200, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 200, 255, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Glow ring */
+    .glow-ring {
+      position: relative;
+    }
+    .glow-ring::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, rgba(0,200,255,0.5), rgba(0,255,136,0.3), transparent);
+      z-index: -1;
+    }
+
+    /* Custom select arrow */
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300c8ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 44px !important;
+    }
+
+    /* Input focus ring */
+    .finput:focus {
+      outline: none;
+      border-color: #00c8ff;
+      box-shadow: 0 0 0 3px rgba(0,200,255,0.15), 0 0 16px rgba(0,200,255,0.2);
+    }
+
+    /* Run Diagnostic glow button */
+    .btn-diagnostic {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #00c8ff, #0099ff);
+      transition: all 0.3s ease;
+    }
+    .btn-diagnostic::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #00e5ff, #00ff88);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .btn-diagnostic:hover::before,
+    .btn-diagnostic:active::before {
+      opacity: 1;
+    }
+    .btn-diagnostic:hover,
+    .btn-diagnostic:active {
+      box-shadow: 0 0 30px rgba(0, 200, 255, 0.8), 0 0 80px rgba(0, 200, 255, 0.4), 0 0 120px rgba(0, 255, 136, 0.2);
+      transform: translateY(-2px);
+    }
+    .btn-diagnostic span { position: relative; z-index: 1; }
+
+    /* Terminal cursor */
+    .cursor::after {
+      content: '|';
+      animation: blink 1s step-end infinite;
+      color: #00c8ff;
+      font-weight: 300;
+    }
+
+    /* Trust card shimmer */
+    .trust-card {
+      background: linear-gradient(135deg, rgba(13,21,38,0.9), rgba(10,15,26,0.9));
+      border: 1px solid rgba(0,200,255,0.1);
+      transition: all 0.35s ease;
+    }
+    .trust-card:hover {
+      border-color: rgba(0,200,255,0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,200,255,0.15);
+    }
+
+    /* Success state */
+    .success-overlay {
+      background: radial-gradient(circle at center, rgba(0,255,136,0.15) 0%, transparent 70%);
+    }
+
+    /* Scanning line animation on form */
+    .scan-line {
+      background: linear-gradient(transparent, rgba(0,200,255,0.08), transparent);
+      animation: scan 4s linear infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ─── SVG Icons ─────────────────────────────────────── */
+const ShieldIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7l-9-5z" stroke="#00ff88" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 12l2 2 4-4" stroke="#00ff88" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ZeroFeeIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="9" stroke="#00c8ff" strokeWidth="1.5"/>
+    <path d="M12 7v10M9 9.5C9 8.12 10.34 7 12 7s3 1.12 3 2.5-1.34 2.5-3 2.5-3 1.12-3 2.5S10.34 17 12 17s3-1.12 3-2.5" stroke="#00c8ff" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const BankIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 21h18M3 10h18M5 10V21M19 10V21M9 10V21M15 10V21M12 3L3 10h18L12 3z" stroke="#00c8ff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const CheckCircleIcon = () => (
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="9" stroke="#00ff88" strokeWidth="1.5"/>
+    <path d="M8 12l3 3 5-6" stroke="#00ff88" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const TerminalIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <polyline points="4 17 10 11 4 5" stroke="#00c8ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="12" y1="19" x2="20" y2="19" stroke="#00c8ff" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+/* ─── Animated Stat Ticker ───────────────────────────── */
+const StatBadge = ({ label, value, accent }) => (
+  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{
+    background: 'rgba(13,21,38,0.8)',
+    border: `1px solid ${accent === 'green' ? 'rgba(0,255,136,0.25)' : 'rgba(0,200,255,0.25)'}`,
+  }}>
+    <span className="w-2 h-2 rounded-full animate-pulse-slow" style={{
+      backgroundColor: accent === 'green' ? '#00ff88' : '#00c8ff',
+      boxShadow: `0 0 6px ${accent === 'green' ? '#00ff88' : '#00c8ff'}`,
+    }}></span>
+    <span className="font-mono text-xs font-semibold" style={{ color: accent === 'green' ? '#00ff88' : '#00c8ff' }}>{value}</span>
+    <span className="text-xs text-gray-500">{label}</span>
+  </div>
+);
+
+/* ─── Main App ────────────────────────────────────────── */
+function App() {
+  const [form, setForm] = useState({
+    fullName: '',
+    whatsapp: '',
+    pincode: '',
+    goal: '',
+  });
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('');
+  const [focusedField, setFocusedField] = useState(null);
+
+  const loadingSteps = [
+    'Connecting to network...',
+    'Running credit analysis...',
+    'Scanning partner banks...',
+    'Compiling results...',
+    'Diagnostic complete ✓',
+  ];
+
+  const validate = () => {
+    const e = {};
+    if (!form.fullName.trim()) e.fullName = 'Required';
+    if (!form.whatsapp.trim() || !/^[6-9]\d{9}$/.test(form.whatsapp.replace(/\s/g, '')))
+      e.whatsapp = 'Enter a valid 10-digit WhatsApp number';
+    if (!form.pincode.trim() || !/^\d{6}$/.test(form.pincode))
+      e.pincode = 'Enter a valid 6-digit pincode';
+    if (!form.goal) e.goal = 'Please select a goal';
+    return e;
+  };
+
+  const handleChange = (e) => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: undefined }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setLoading(true);
+    for (let i = 0; i < loadingSteps.length; i++) {
+      setLoadingText(loadingSteps[i]);
+      await new Promise(r => setTimeout(r, 600));
+    }
+    setLoading(false);
+    setSubmitted(true);
+  };
+
+  const inputClass = (field) =>
+    `finput w-full bg-charcoal-800 text-white placeholder-gray-600 border rounded-xl px-4 py-4 text-base font-sans transition-all duration-200 ${
+      errors[field]
+        ? 'border-red-500 focus:border-red-400'
+        : focusedField === field
+        ? 'border-electric'
+        : 'border-white/8'
+    }`;
+
+  return (
+    <div className="min-h-screen hex-bg grid-lines relative" style={{ background: '#0a0f1a' }}>
+
+      {/* ── Ambient orbs ── */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-10 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #00c8ff 0%, transparent 70%)' }} />
+        <div className="absolute top-1/2 -left-32 w-80 h-80 rounded-full opacity-8 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #00ff88 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-20 right-1/4 w-64 h-64 rounded-full opacity-6 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #00c8ff 0%, transparent 70%)' }} />
+      </div>
+
+      <div className="relative z-10 max-w-lg mx-auto px-4 py-8 pb-16">
+
+        {/* ── Top Nav Bar ── */}
+        <nav className="flex items-center justify-between mb-10">
+          <div className="flex items-center gap-2.5">
+            {/* Logo mark */}
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #00c8ff 0%, #0066ff 100%)',
+                boxShadow: '0 0 16px rgba(0,200,255,0.5)',
+              }}>
+              <span className="font-mono font-bold text-sm text-white" style={{ letterSpacing: '-1px' }}>CN</span>
+            </div>
+            <span className="font-bold text-white text-lg tracking-tight">CredNode</span>
+          </div>
+          {/* Live indicator */}
+          <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-neon animate-pulse-slow"
+              style={{ boxShadow: '0 0 6px #00ff88' }}></span>
+            LIVE
+          </div>
+        </nav>
+
+        {/* ── Hero Section ── */}
+        <section className="mb-10 animate-fade-up">
+          {/* Status badge */}
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full font-mono text-xs"
+            style={{
+              background: 'rgba(0,200,255,0.08)',
+              border: '1px solid rgba(0,200,255,0.2)',
+              color: '#00c8ff',
+            }}>
+            <TerminalIcon />
+            FINANCIAL DIAGNOSTIC v2.6
+          </div>
+
+          <h1 className="font-black text-4xl sm:text-5xl leading-none mb-4"
+            style={{
+              background: 'linear-gradient(135deg, #ffffff 0%, #c8e8ff 50%, #00c8ff 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              letterSpacing: '-1.5px',
+            }}>
+            Level Up Your<br />
+            <span style={{
+              background: 'linear-gradient(90deg, #00ff88, #00c8ff)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>Financial Stack</span>
+          </h1>
+
+          <p className="text-gray-400 text-base leading-relaxed mb-6 max-w-sm">
+            Optimize your credit, unlock premium rewards, and secure the capital you need.
+          </p>
+
+          {/* Live stats row */}
+          <div className="flex flex-wrap gap-2">
+            <StatBadge value="4,200+" label="clients served" accent="green" />
+            <StatBadge value="30+ banks" label="network" accent="blue" />
+          </div>
+        </section>
+
+        {/* ── Form Card ── */}
+        {!submitted ? (
+          <section className="animate-fade-up" style={{ animationDelay: '0.15s' }}>
+            <div className="relative rounded-2xl overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, rgba(13,21,38,0.95) 0%, rgba(10,15,26,0.98) 100%)',
+                border: '1px solid rgba(0,200,255,0.15)',
+                boxShadow: '0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+              }}>
+
+              {/* Scanning line */}
+              <div className="absolute inset-x-0 top-0 h-48 overflow-hidden pointer-events-none z-0 opacity-60">
+                <div className="scan-line absolute inset-x-0 h-24" />
+              </div>
+
+              {/* Card header */}
+              <div className="relative z-10 px-5 pt-5 pb-4 border-b" style={{ borderColor: 'rgba(0,200,255,0.1)' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex gap-1.5">
+                    <span className="w-3 h-3 rounded-full" style={{ background: '#ff5f57' }}></span>
+                    <span className="w-3 h-3 rounded-full" style={{ background: '#febc2e' }}></span>
+                    <span className="w-3 h-3 rounded-full" style={{ background: '#28c840' }}></span>
+                  </div>
+                  <span className="text-gray-600 font-mono text-xs ml-2">diagnostic_init.sh</span>
+                </div>
+                <p className="font-mono text-xs mt-2 cursor" style={{ color: '#00c8ff' }}>
+                  {'> '} Enter your details to run a free diagnostic
+                </p>
+              </div>
+
+              {/* Form body */}
+              <form onSubmit={handleSubmit} className="relative z-10 p-5 space-y-4" noValidate>
+
+                {/* Full Name */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-2 font-mono uppercase tracking-wider">
+                    Full Name
+                  </label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    name="fullName"
+                    value={form.fullName}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('fullName')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="e.g. Priya Sharma"
+                    className={inputClass('fullName')}
+                    autoComplete="name"
+                  />
+                  {errors.fullName && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.fullName}</p>}
+                </div>
+
+                {/* WhatsApp Number */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-2 font-mono uppercase tracking-wider">
+                    WhatsApp Number
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-mono text-sm select-none">
+                      +91
+                    </span>
+                    <input
+                      id="whatsapp"
+                      type="tel"
+                      name="whatsapp"
+                      value={form.whatsapp}
+                      onChange={handleChange}
+                      onFocus={() => setFocusedField('whatsapp')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="98765 43210"
+                      inputMode="numeric"
+                      maxLength={10}
+                      className={`${inputClass('whatsapp')} pl-14`}
+                      autoComplete="tel"
+                    />
+                  </div>
+                  {errors.whatsapp && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.whatsapp}</p>}
+                </div>
+
+                {/* Pincode */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-2 font-mono uppercase tracking-wider">
+                    Pincode
+                  </label>
+                  <input
+                    id="pincode"
+                    type="text"
+                    name="pincode"
+                    value={form.pincode}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('pincode')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="400 001"
+                    inputMode="numeric"
+                    maxLength={6}
+                    className={inputClass('pincode')}
+                    autoComplete="postal-code"
+                  />
+                  {errors.pincode && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.pincode}</p>}
+                </div>
+
+                {/* Goal Dropdown */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 mb-2 font-mono uppercase tracking-wider">
+                    What is your primary goal?
+                  </label>
+                  <select
+                    id="goal"
+                    name="goal"
+                    value={form.goal}
+                    onChange={handleChange}
+                    onFocus={() => setFocusedField('goal')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`${inputClass('goal')} cursor-pointer`}
+                    style={{ color: form.goal ? 'white' : '#6b7280' }}
+                  >
+                    <option value="" disabled style={{ background: '#0d1526', color: '#6b7280' }}>
+                      Select an objective...
+                    </option>
+                    <option value="credit_card" style={{ background: '#0d1526', color: 'white' }}>
+                      💳  Credit Card Optimization
+                    </option>
+                    <option value="personal_loan" style={{ background: '#0d1526', color: 'white' }}>
+                      🏦  Personal Loan
+                    </option>
+                    <option value="business_loan" style={{ background: '#0d1526', color: 'white' }}>
+                      🚀  Business Loan
+                    </option>
+                    <option value="cibil_repair" style={{ background: '#0d1526', color: 'white' }}>
+                      🔧  CIBIL Repair
+                    </option>
+                  </select>
+                  {errors.goal && <p className="mt-1.5 text-xs text-red-400 font-mono">{errors.goal}</p>}
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-2">
+                  <button
+                    id="runDiagnosticBtn"
+                    type="submit"
+                    disabled={loading}
+                    className="btn-diagnostic w-full py-4 rounded-xl font-bold text-base text-white tracking-wide disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                    style={{ minHeight: 56 }}
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-3">
+                        <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
+                          <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+                        </svg>
+                        <span className="font-mono text-sm">{loadingText}</span>
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-2">
+                        <span>⚡</span>
+                        <span>Run Diagnostic</span>
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Disclaimer */}
+                <p className="text-center text-xs text-gray-600 leading-relaxed pt-1">
+                  By submitting, you agree to be contacted via WhatsApp.<br/>
+                  No spam. No upfront fees. Pinky promise.
+                </p>
+
+              </form>
+            </div>
+          </section>
+        ) : (
+          /* ── Success State ── */
+          <section className="animate-fade-up">
+            <div className="relative rounded-2xl overflow-hidden text-center py-12 px-6"
+              style={{
+                background: 'linear-gradient(135deg, rgba(13,21,38,0.95) 0%, rgba(10,15,26,0.98) 100%)',
+                border: '1px solid rgba(0,255,136,0.3)',
+                boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 40px rgba(0,255,136,0.08)',
+              }}>
+              <div className="success-overlay absolute inset-0 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex justify-center mb-5" style={{ filter: 'drop-shadow(0 0 16px rgba(0,255,136,0.6))' }}>
+                  <CheckCircleIcon />
+                </div>
+                <h2 className="text-2xl font-black text-white mb-2">Diagnostic Running!</h2>
+                <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xs mx-auto">
+                  Our financial experts will analyse your profile and reach you on WhatsApp within <span style={{ color: '#00ff88' }}>24 hours</span>.
+                </p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full font-mono text-xs"
+                  style={{
+                    background: 'rgba(0,255,136,0.1)',
+                    border: '1px solid rgba(0,255,136,0.25)',
+                    color: '#00ff88',
+                  }}>
+                  <span className="w-2 h-2 rounded-full bg-neon animate-pulse-slow"
+                    style={{ boxShadow: '0 0 6px #00ff88' }}></span>
+                  Case #{Math.floor(Math.random() * 90000) + 10000} opened
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Trust Section ── */}
+        <section className="mt-8 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+          <p className="text-center text-xs font-mono text-gray-600 uppercase tracking-widest mb-4">
+            Why clients trust CredNode
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+
+            {/* Data Encrypted */}
+            <div className="trust-card rounded-xl p-4 text-center flex flex-col items-center gap-2.5">
+              <div className="p-2.5 rounded-xl" style={{ background: 'rgba(0,255,136,0.1)' }}>
+                <ShieldIcon />
+              </div>
+              <div>
+                <p className="text-white text-xs font-bold leading-tight">Data</p>
+                <p className="text-white text-xs font-bold leading-tight">Encrypted</p>
+                <p className="text-gray-600 text-xs mt-1">256-bit SSL</p>
+              </div>
+            </div>
+
+            {/* Zero Upfront Fees */}
+            <div className="trust-card rounded-xl p-4 text-center flex flex-col items-center gap-2.5">
+              <div className="p-2.5 rounded-xl" style={{ background: 'rgba(0,200,255,0.1)' }}>
+                <ZeroFeeIcon />
+              </div>
+              <div>
+                <p className="text-white text-xs font-bold leading-tight">Zero</p>
+                <p className="text-white text-xs font-bold leading-tight">Upfront Fees</p>
+                <p className="text-gray-600 text-xs mt-1">Always free</p>
+              </div>
+            </div>
+
+            {/* Multiple Bank Partners */}
+            <div className="trust-card rounded-xl p-4 text-center flex flex-col items-center gap-2.5">
+              <div className="p-2.5 rounded-xl" style={{ background: 'rgba(0,200,255,0.1)' }}>
+                <BankIcon />
+              </div>
+              <div>
+                <p className="text-white text-xs font-bold leading-tight">30+ Bank</p>
+                <p className="text-white text-xs font-bold leading-tight">Partners</p>
+                <p className="text-gray-600 text-xs mt-1">Best rates</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Footer ── */}
+        <footer className="mt-10 text-center">
+          <p className="text-gray-700 text-xs font-mono">
+            © 2025 CredNode · All rights reserved
+          </p>
+          <p className="text-gray-700 text-xs mt-1">
+            <a href="#" className="underline underline-offset-2 hover:text-gray-500 transition-colors">Privacy Policy</a>
+            {' '}·{' '}
+            <a href="#" className="underline underline-offset-2 hover:text-gray-500 transition-colors">Terms of Service</a>
+          </p>
+        </footer>
+
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+</script>
+</body>
+</html>
